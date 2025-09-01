@@ -143,7 +143,7 @@ Here are some ideas for future improvements:
 
    - Update data models to support multiple users per transaction
    - Add endpoints for group creation and management
-   - Implement algorithms to split expenses among groups
+   - Implement algorithms to split expenses among groups, especially different splits
 
 7. **Dashboard with Charts**
 
@@ -166,3 +166,49 @@ The following potential edge cases and limitations could be handled in the futur
 - Transaction history overflow: No limit on transaction history size; could grow indefinitely.
 - Data type issues: Amounts and balances should be validated as numbers, not strings.
 - Security: No authentication or authorization checks are currently implemented.
+
+## Testing the Endpoints
+
+Below are sample `curl` commands for each endpoint:
+
+### 1. Get Both Users’ Transactions and Balances
+
+```
+curl -X GET http://localhost:5000/users
+```
+
+### 2. Record a Bill Payment
+
+```
+curl -X POST http://localhost:5000/transactions \
+  -H "Content-Type: application/json" \
+  -d '{"payer": "A", "payee": "B", "total_amount": 100, "description": "Dinner"}'
+```
+
+### 3. List All Past Transactions
+
+```
+curl -X GET http://localhost:5000/transactions
+```
+
+### 4. Settle Outstanding Balance
+
+```
+curl -X POST http://localhost:5000/settle \
+  -H "Content-Type: application/json" \
+  -d '{"payer": "A", "payee": "B", "amount": 50}'
+```
+
+### 5. Enquire Individual User Balance
+
+```
+curl -X GET http://localhost:5000/balance/A
+```
+
+### 6. Check How Much One User Owes Another
+
+```
+curl -X GET http://localhost:5000/owed/A/B
+```
+
+Can also use Postman to send requests and view responses interactively.
