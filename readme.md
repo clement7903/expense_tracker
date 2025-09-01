@@ -1,6 +1,6 @@
 # Expense Tracker
 
-A simple application to track your expenses.
+A simple application to track expenses between 2 users.
 
 ## Features
 
@@ -31,6 +31,8 @@ A simple application to track your expenses.
    ```
 2. Access the app via your browser or terminal as instructed.
 
+---
+
 ## API Endpoints
 
 ### Required Endpoints
@@ -49,9 +51,11 @@ A simple application to track your expenses.
 | /balance/<username>   | GET    | Returns the balance for the specified user |
 | /owed/<payer>/<payee> | GET    | Returns how much <payer> owes to <payee>   |
 
-### Sample Requests & Responses for additional endpoints
+---
 
-**Balance Enquiry**
+## Sample Requests & Responses
+
+### Balance Enquiry
 
 ```
 GET /balance/A
@@ -66,7 +70,7 @@ Response:
 }
 ```
 
-**Amount Owed Enquiry**
+### Amount Owed Enquiry
 
 ```
 GET /owed/A/B
@@ -82,7 +86,7 @@ Response:
 }
 ```
 
-**Error Example**
+### Error Example
 
 ```
 GET /balance/UnknownUser
@@ -96,7 +100,73 @@ Response:
 }
 ```
 
-## Feature Ideas (given more time...)
+---
+
+## Testing the Endpoints
+
+You can test the API endpoints using `curl` commands or with tools like Postman. Below are sample `curl` commands for each endpoint:
+
+- **Get Both Users’ Transactions and Balances**
+
+  ```
+  curl -X GET http://localhost:5000/users
+  ```
+
+- **Record a Bill Payment**
+
+  ```
+  curl -X POST http://localhost:5000/transactions \
+    -H "Content-Type: application/json" \
+    -d '{"payer": "A", "payee": "B", "total_amount": 100, "description": "Dinner"}'
+  ```
+
+- **List All Past Transactions**
+
+  ```
+  curl -X GET http://localhost:5000/transactions
+  ```
+
+- **Settle Outstanding Balance**
+
+  ```
+  curl -X POST http://localhost:5000/settle \
+    -H "Content-Type: application/json" \
+    -d '{"payer": "A", "payee": "B", "amount": 50}'
+  ```
+
+- **Enquire Individual User Balance**
+
+  ```
+  curl -X GET http://localhost:5000/balance/A
+  ```
+
+- **Check How Much One User Owes Another**
+
+  ```
+  curl -X GET http://localhost:5000/owed/A/B
+  ```
+
+You can also use Postman to send requests and view responses interactively.
+
+---
+
+## Edge Cases & Limitations
+
+The following potential edge cases and limitations could be handled in the future:
+
+- Negative or zero amounts: Endpoints should validate that amounts are positive and non-zero.
+- Non-existent users: Ensure all user references are valid to prevent errors.
+- Self-payment: Prevent users from paying or settling with themselves.
+- Insufficient balance: Only the payer’s balance is checked; payee’s balance may also need validation.
+- Malformed requests: Validate all required fields and data types in incoming requests.
+- Division by zero: If the number of users or splits changes, fair share calculations could fail.
+- Transaction history overflow: No limit on transaction history size; could grow indefinitely.
+- Data type issues: Amounts and balances should be validated as numbers, not strings.
+- Security: No authentication or authorization checks are currently implemented.
+
+---
+
+## Feature Ideas
 
 Here are some ideas for future improvements:
 
@@ -153,62 +223,11 @@ Here are some ideas for future improvements:
 8. **Add budget balances**
    - Allow each user to top up their balances
 
-## Edge Cases & Limitations
+---
 
-The following potential edge cases and limitations could be handled in the future:
+## Design Decisions
 
-- Negative or zero amounts: Endpoints should validate that amounts are positive and non-zero.
-- Non-existent users: Ensure all user references are valid to prevent errors.
-- Self-payment: Prevent users from paying or settling with themselves.
-- Insufficient balance: Only the payer’s balance is checked; payee’s balance may also need validation.
-- Malformed requests: Validate all required fields and data types in incoming requests.
-- Division by zero: If the number of users or splits changes, fair share calculations could fail.
-- Transaction history overflow: No limit on transaction history size; could grow indefinitely.
-- Data type issues: Amounts and balances should be validated as numbers, not strings.
-- Security: No authentication or authorization checks are currently implemented.
-
-## Testing the Endpoints
-
-Below are sample `curl` commands for each endpoint:
-
-### 1. Get Both Users’ Transactions and Balances
-
-```
-curl -X GET http://localhost:5000/users
-```
-
-### 2. Record a Bill Payment
-
-```
-curl -X POST http://localhost:5000/transactions \
-  -H "Content-Type: application/json" \
-  -d '{"payer": "A", "payee": "B", "total_amount": 100, "description": "Dinner"}'
-```
-
-### 3. List All Past Transactions
-
-```
-curl -X GET http://localhost:5000/transactions
-```
-
-### 4. Settle Outstanding Balance
-
-```
-curl -X POST http://localhost:5000/settle \
-  -H "Content-Type: application/json" \
-  -d '{"payer": "A", "payee": "B", "amount": 50}'
-```
-
-### 5. Enquire Individual User Balance
-
-```
-curl -X GET http://localhost:5000/balance/A
-```
-
-### 6. Check How Much One User Owes Another
-
-```
-curl -X GET http://localhost:5000/owed/A/B
-```
-
-Can also use Postman to send requests and view responses interactively.
+- **RESTful API Structure:** Endpoints follow REST principles, making them predictable and easy to consume with standard tools (curl, Postman, etc.).
+- **Modular Codebase:** Logic is separated into controllers, routes, and data modules to improve maintainability and allow for easier future expansion (e.g., adding new features or endpoints).
+- **Extensibility:** The code and API are structured so that new features (like group expenses, authentication, analytics) can be added with minimal refactoring.
+- **Error Handling:** Basic error checks are included for user existence and balance, with clear error messages returned to the client. More robust validation and security can be added as needed.
