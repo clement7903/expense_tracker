@@ -16,24 +16,33 @@ def calculate_balances():
     }
 
 
-def record_transaction(payer, total_amount, description):
-    """Record a shared transaction and split equally."""
+def record_transaction(payer, payee, total_amount, description):
+    """Record a shared transaction between payer and payee, split equally."""
     if payer not in users:
         return None, "Invalid payer"
+    if payee not in users:
+        return None, "Invalid payee"
+    if payer == payee:
+        return None, "Payer and payee must be different"
 
     if users[payer]["balance"] < total_amount:
         return None, "Insufficient balance"
 
+    split_amount = total_amount / 2
+
     # Deduct amount from payer
     users[payer]["balance"] -= total_amount
+    # Credit split amount to payee
+    users[payee]["balance"] += split_amount
 
     # Create transaction record
     transaction = {
         "id": str(uuid4()),
         "payer": payer,
+        "payee": payee,
         "total_amount": total_amount,
         "description": description,
-        "split_amount": total_amount / 2,
+        "split_amount": split_amount,
     }
     transactions.append(transaction)
 
@@ -42,16 +51,16 @@ def record_transaction(payer, total_amount, description):
         "type": "payment",
         "description": description,
         "amount": -total_amount,
+        "counterparty": payee,
     })
 
-    # Record share for the other user
-    for uid in users:
-        if uid != payer:
-            users[uid]["transactions"].append({
-                "type": "share",
-                "description": description,
-                "amount": total_amount / 2,
-            })
+    # Record payee's share
+    users[payee]["transactions"].append({
+        "type": "share",
+        "description": description,
+        "amount": split_amount,
+        "counterparty": payer,
+    })
 
     return transaction, None
 

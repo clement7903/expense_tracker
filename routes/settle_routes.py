@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from controllers.settle_controller import settle_balance
+from controllers.settle_controller import settle_balance, get_user_balance, get_amount_owed
 from controllers.transactions_controller import calculate_balances
 
 settle_bp = Blueprint("settle", __name__)
@@ -23,3 +23,19 @@ def settle_payment():
         "message": f"{payer} paid {amount} to {payee}",
         "current_balances": calculate_balances(),
     })
+
+@settle_bp.route("/balance/<username>", methods=["GET"])
+def balance_enquiry(username):
+    """API: Get balance for a particular user"""
+    balance = get_user_balance(username)
+    if balance == "Invalid user":
+        return jsonify({"error": "Invalid user"}), 404
+    return jsonify({"username": username, "balance": balance})
+
+@settle_bp.route("/owed/<payer>/<payee>", methods=["GET"])
+def amount_owed_enquiry(payer, payee):
+    """API: Get amount payer owes to payee"""
+    amount = get_amount_owed(payer, payee)
+    if amount == "Invalid users":
+        return jsonify({"error": "Invalid users"}), 404
+    return jsonify({"payer": payer, "payee": payee, "amount_owed": amount})
