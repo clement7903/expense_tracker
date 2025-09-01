@@ -95,3 +95,56 @@ Response:
   "error": "Invalid user"
 }
 ```
+
+## Feature Ideas (given more time...)
+
+Here are some ideas for future improvements:
+
+- Add user authentication and registration
+- Support multiple currencies
+- Add expense categories and analytics
+- Export transactions to CSV or PDF
+- Add notifications for settlements or payments
+- Mobile app integration
+- Group expense tracking (for more than two users)
+- Dashboard with charts and summaries
+
+## How to Implement Feature Ideas
+
+1. **User Authentication and Registration**
+
+   - Integrate Flask-Login or similar authentication library
+   - Add endpoints for user signup, login, and logout
+   - Store user credentials securely (e.g., hashed passwords)
+
+2. **Support Multiple Currencies**
+
+   - Add a currency field to user and transaction models
+   - Use a currency conversion API for calculations
+   - Update endpoints to handle currency selection
+
+3. **Expense Categories and Analytics**
+
+   - Add a category field to transactions
+   - Create endpoints to filter and summarize by category
+   - Use charting libraries (e.g., Chart.js) for analytics dashboard
+
+4. **Export Transactions**
+
+   - Add endpoints to export data in CSV or PDF format
+   - Use libraries like pandas (CSV) or ReportLab (PDF)
+
+5. **Notifications**
+
+   - Integrate email or push notification services
+   - Trigger notifications on settlement or payment events
+
+6. **Group Expense Tracking**
+
+   - Update data models to support multiple users per transaction
+   - Add endpoints for group creation and management
+   - Implement algorithms to split expenses among groups
+
+7. **Dashboard with Charts**
+   - Build a frontend dashboard using a JS framework (React, Vue)
+   - Integrate charting libraries for visual summaries
