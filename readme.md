@@ -146,5 +146,23 @@ Here are some ideas for future improvements:
    - Implement algorithms to split expenses among groups
 
 7. **Dashboard with Charts**
+
    - Build a frontend dashboard using a JS framework (React, Vue)
    - Integrate charting libraries for visual summaries
+
+8. **Add budget balances**
+   - Allow each user to top up their balances
+
+## Edge Cases & Limitations
+
+The following potential edge cases and limitations could be handled in the future:
+
+- Negative or zero amounts: Endpoints should validate that amounts are positive and non-zero.
+- Non-existent users: Ensure all user references are valid to prevent errors.
+- Self-payment: Prevent users from paying or settling with themselves.
+- Insufficient balance: Only the payer’s balance is checked; payee’s balance may also need validation.
+- Malformed requests: Validate all required fields and data types in incoming requests.
+- Division by zero: If the number of users or splits changes, fair share calculations could fail.
+- Transaction history overflow: No limit on transaction history size; could grow indefinitely.
+- Data type issues: Amounts and balances should be validated as numbers, not strings.
+- Security: No authentication or authorization checks are currently implemented.
