@@ -49,7 +49,7 @@ A simple application to track expenses between 2 users and allows them to settle
 | Endpoint                      | Method | Description                                      |
 | ----------------------------- | ------ | ------------------------------------------------ |
 | /balance/<username>           | GET    | Returns the balance for the specified user       |
-| /owed/<target>/<counterparty> | GET    | Returns how much <target> owes to <counterparty> |
+| /owed/`<target>`/`<counterparty>` | GET    | Returns how much `<target>` owes to `<counterparty>` |
 
 ---
 
