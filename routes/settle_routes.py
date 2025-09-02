@@ -8,20 +8,19 @@ settle_bp = Blueprint("settle", __name__)
 def settle_payment():
     """API: Settle outstanding balance"""
     data = request.get_json()
-    payer = data.get("payer")
-    payee = data.get("payee")
+    settler = data.get("settler")
+    counterparty = data.get("counterparty")
     amount = data.get("amount")
 
-    if not payer or not payee or not amount:
+    if not settler or not counterparty or not amount:
         return jsonify({"error": "Missing required fields"}), 400
 
-    error = settle_balance(payer, payee, amount)
+    error = settle_balance(settler, counterparty, amount)
     if error:
         return jsonify({"error": error}), 400
 
     return jsonify({
-        "message": f"{payer} paid {amount} to {payee}",
-        "current_balances": calculate_balances(),
+        "message": f"{settler} paid ${amount} to {counterparty}",
     })
 
 @settle_bp.route("/balance/<username>", methods=["GET"])
@@ -32,10 +31,10 @@ def balance_enquiry(username):
         return jsonify({"error": "Invalid user"}), 404
     return jsonify({"username": username, "balance": balance})
 
-@settle_bp.route("/owed/<payer>/<payee>", methods=["GET"])
-def amount_owed_enquiry(payer, payee):
-    """API: Get amount payer owes to payee"""
-    amount = get_amount_owed(payer, payee)
+@settle_bp.route("/owed/<target>/<counterparty>", methods=["GET"])
+def amount_owed_enquiry(target, counterparty):
+    """API: Get amount target owes to counterparty"""
+    amount = get_amount_owed(target, counterparty)
     if amount == "Invalid users":
         return jsonify({"error": "Invalid users"}), 404
-    return jsonify({"payer": payer, "payee": payee, "amount_owed": amount})
+    return jsonify({"target": target, "counterparty": counterparty, "amount_owed": amount})

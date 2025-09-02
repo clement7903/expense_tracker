@@ -5,7 +5,7 @@ def calculate_balances():
     """Calculate how much each user owes or is owed."""
     total_paid = {"A": 0, "B": 0}
     for t in transactions:
-        total_paid[t["payer"]] += t["total_amount"]
+        total_paid[t["bill_payer"]] += t["total_amount"]
 
     total_spent = sum(total_paid.values())
     fair_share = total_spent / 2
@@ -16,50 +16,48 @@ def calculate_balances():
     }
 
 
-def record_transaction(payer, payee, total_amount, description):
-    """Record a shared transaction between payer and payee, split equally."""
-    if payer not in users:
-        return None, "Invalid payer"
-    if payee not in users:
-        return None, "Invalid payee"
-    if payer == payee:
-        return None, "Payer and payee must be different"
+def record_transaction(bill_payer, counterparty, total_amount, description):
+    """Record a shared transaction between bill_payer and counterparty, split equally."""
+    if bill_payer not in users:
+        return None, "Invalid bill_payer"
+    if counterparty not in users:
+        return None, "Invalid counterparty"
+    if bill_payer == counterparty:
+        return None, "Bill payer and counterparty must be different"
 
-    if users[payer]["balance"] < total_amount:
+    if users[bill_payer]["balance"] < total_amount:
         return None, "Insufficient balance"
 
     split_amount = total_amount / 2
 
-    # Deduct amount from payer
-    users[payer]["balance"] -= total_amount
-    # Credit split amount to payee
-    users[payee]["balance"] += split_amount
+    # Deduct bill amount paid from bill_payer
+    users[bill_payer]["balance"] -= total_amount
 
     # Create transaction record
     transaction = {
         "id": str(uuid4()),
-        "payer": payer,
-        "payee": payee,
+        "bill_payer": bill_payer,
+        "counterparty": counterparty,
         "total_amount": total_amount,
         "description": description,
         "split_amount": split_amount,
     }
     transactions.append(transaction)
 
-    # Record payer's transaction
-    users[payer]["transactions"].append({
-        "type": "payment",
-        "description": description,
-        "amount": -total_amount,
-        "counterparty": payee,
-    })
-
-    # Record payee's share
-    users[payee]["transactions"].append({
-        "type": "share",
+    # Record bill_payer's credit amount
+    users[bill_payer]["transactions"].append({
+        "type": "interparty",
         "description": description,
         "amount": split_amount,
-        "counterparty": payer,
+        "counterparty": counterparty,
+    })
+    
+    # Record counterparty's owed amount
+    users[counterparty]["transactions"].append({
+        "type": "interparty",
+        "description": description,
+        "amount": -split_amount,
+        "counterparty": bill_payer,
     })
 
     return transaction, None

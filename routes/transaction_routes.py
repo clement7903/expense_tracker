@@ -13,15 +13,15 @@ def fetch_transactions():
 def create_transaction():
     """API: Record a new group transaction"""
     data = request.get_json()
-    payer = data.get("payer")
-    payee = data.get("payee")
+    bill_payer = data.get("bill_payer")
+    counterparty = data.get("counterparty")
     total_amount = data.get("total_amount")
     description = data.get("description", "Shared expense")
 
-    if not payer or not payee or not total_amount:
+    if not bill_payer or not counterparty or not total_amount:
         return jsonify({"error": "Missing required fields"}), 400
 
-    transaction, error = record_transaction(payer, payee, total_amount, description)
+    transaction, error = record_transaction(bill_payer, counterparty, total_amount, description)
     if error:
         return jsonify({"error": error}), 400
 
