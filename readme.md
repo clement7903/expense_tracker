@@ -1,6 +1,6 @@
 # Expense Tracker
 
-A simple application to track expenses between 2 users.
+A simple application to track expenses between 2 users and allows them to settle the amount owe to each other.
 
 ## Features
 
@@ -46,10 +46,10 @@ A simple application to track expenses between 2 users.
 
 ### Additional Endpoints
 
-| Endpoint              | Method | Description                                |
-| --------------------- | ------ | ------------------------------------------ |
-| /balance/<username>   | GET    | Returns the balance for the specified user |
-| /owed/<payee>/<payer> | GET    | Returns how much <payee> owes to <payer>   |
+| Endpoint                      | Method | Description                                      |
+| ----------------------------- | ------ | ------------------------------------------------ |
+| /balance/<username>           | GET    | Returns the balance for the specified user       |
+| /owed/<target>/<counterparty> | GET    | Returns how much <target> owes to <counterparty> |
 
 ---
 
@@ -73,16 +73,16 @@ Response:
 ### Amount Owed Enquiry
 
 ```
-GET /owed/A/B
+GET /owed/B/A
 ```
 
 Response:
 
 ```json
 {
-  "payer": "A",
-  "payee": "B",
-  "amount_owed": 0.0
+  "counterparty": "A",
+  "target": "B",
+  "amount_owed": 50.0
 }
 ```
 
@@ -117,7 +117,7 @@ You can test the API endpoints using `curl` commands or with tools like Postman.
   ```
   curl -X POST http://localhost:5000/transactions \
     -H "Content-Type: application/json" \
-    -d '{"payer": "A", "payee": "B", "total_amount": 100, "description": "Dinner"}'
+    -d '{"bill_payer": "A", "counterparty": "B", "total_amount": 100, "description": "Dinner"}'
   ```
 
 - **List All Past Transactions**
@@ -131,22 +131,20 @@ You can test the API endpoints using `curl` commands or with tools like Postman.
   ```
   curl -X POST http://localhost:5000/settle \
     -H "Content-Type: application/json" \
-    -d '{"payer": "A", "payee": "B", "amount": 50}'
+    -d '{"settler": "B", "counterparty": "A", "amount": 50}'
   ```
 
 - **Enquire Individual User Balance**
 
   ```
-  curl -X GET http://localhost:5000/balance/A
+  curl -X GET http://localhost:5000/balance/B
   ```
 
 - **Check How Much One User Owes Another**
 
   ```
-  curl -X GET http://localhost:5000/owed/A/B
+  curl -X GET http://localhost:5000/owed/B/A
   ```
-
-You can also use Postman to send requests and view responses interactively.
 
 ---
 
